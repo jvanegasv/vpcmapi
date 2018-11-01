@@ -12,6 +12,7 @@ var app = express();
 // socket.io
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var ioJwtAuth = require('socketio-jwt-auth');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +28,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next){
   res.io = io;
   next();
+});
+// middleware para validar soket.io con token
+io.use(ioJwtAuth.authenticate({
+  secret: '#H3g0y465',    // required, used to verify the token's signature
+  algorithm: 'HS256',        // optional, default to be HS256
+  succeedWithoutToken: false
+}, function(payload, done) {
+
+  // IF TOKEN IS OK (payload) THEN 
+  // YOU CAN MAKE MORE VALIDATIONS
+  // AND FINNALY RETURN AND ERROR OR SUCCESS
+
+  // return ERROR:
+  // return done(err);
+
+  // return success with data
+  return done(null,payload);
+
+}));
+
+io.on('connection', function(socket) {
+  console.log('Alguien se conecto with data:' , socket.request.user);
 });
 
 app.use('/', indexRouter);
