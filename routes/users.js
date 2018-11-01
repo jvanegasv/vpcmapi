@@ -8,9 +8,14 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+router.get('/apilogin', function(req, res, next) {
+  DbUtils.UserModel.apiLogin('59d53d641','8665d81a0df64ecb7483f9172015b195 x')
+  .then(data => res.json(data))
+});
+
 router.get('/getbysql', (req, res, next) => {
 
-  DbUtils.getBySql("select * from services")
+  DbUtils.getBySql("select * from services where service_id = 490")
   .then((result) => res.json(result))
   .catch(error => res.send(error));
 
