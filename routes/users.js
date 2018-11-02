@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 const jwt = require('../helpers/jwt');
+const userController = require('../controllers/userController');
 
-const routeGuard = (req, res, next) => {
+const routeGuard = async (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(' ');
-    const validToken = jwt.validate(token[1]);
-    if (validToken.success) {
-      req.app.locals.usuario = validToken.payload;
+    const validToken = await jwt.validate(token[1]);
+    if (!validToken.error) {
+      res.user = validToken.payload.user;
       next();
     } else {
       res.sendStatus(403).send();
@@ -18,17 +19,14 @@ const routeGuard = (req, res, next) => {
   }
 }
 
-/* GET users listing. */
-router.get('/', function(req, res) {
-  res.send('respond with a resource');
-});
+router.get('/', userController.index);
 
 router.post('/apilogin',(req, res) => {
-  res.json({token: jwt.generate({user: 'Jorge'})});
+  jwt.generate({user_id: 1}).then(token => res.json({token}));
 });
 
 router.get('/info', routeGuard, (req, res) => {
-  console.log(req.usuario);
+  console.log(res.user);
   res.send('aqui va mi info');
 });
 
