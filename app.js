@@ -14,6 +14,9 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var ioJwtAuth = require('socketio-jwt-auth');
 
+const Db = require('./models');
+const tokenSecret = require('./config').jwtSecret;
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -31,10 +34,22 @@ app.use(function(req, res, next){
 });
 // middleware para validar soket.io con token
 io.use(ioJwtAuth.authenticate({
-  secret: '#H3g0y465',    // required, used to verify the token's signature
+  secret: tokenSecret,    // required, used to verify the token's signature
   algorithm: 'HS256',        // optional, default to be HS256
   succeedWithoutToken: false
-}, function(payload, done) {
+}, async (payload, done) => {
+
+  const result = await Db.getBySql(`select users.* from jwts, users where jwt_user = user_id and jwt_id = ${ payload.token_id } and jwt_valid = 1`);
+  if (result.error){
+    return done('ERROR');
+  } else {
+      if (result.result.length > 0) {
+          payload.user = result.result[0];
+          return done(null,payload);
+      } else {
+        return done('ERROR');
+      }
+  }
 
   // IF TOKEN IS OK (payload) THEN 
   // YOU CAN MAKE MORE VALIDATIONS
@@ -44,7 +59,7 @@ io.use(ioJwtAuth.authenticate({
   // return done(err);
 
   // return success with data
-  return done(null,payload);
+  // return done(null,payload);
 
 }));
 

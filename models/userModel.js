@@ -1,17 +1,18 @@
-const Db = require('./index');
+class userModel {
 
-const tableName = 'users';
+    constructor(DBLINK) {
+        this.Db = DBLINK;
+        this.tableName = 'users';
+    }
 
-const UserModel = {
-
-    getBy: async (byKey, byValue) => {
+    async getBy(byKey, byValue) {
 
         let toReturn = {
             error: false,
             user: {}
         }
 
-        const result = await Db.getByID(tableName,byKey,byValue);
+        const result = await this.Db.getByID(this.tableName,byKey,byValue);
 
         if (result.error) {
             toReturn.error = result.error;
@@ -20,8 +21,9 @@ const UserModel = {
                 toReturn.user = result.result[0];
             }
         }
+
         return toReturn;
-    }
+    };
 }
 
-module.exports = UserModel;
+module.exports = userModel;
