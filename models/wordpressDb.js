@@ -5,8 +5,8 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const config = require(__dirname + '/../config/configWordpress.json')[env];
+const dbWp = {};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -16,7 +16,7 @@ if (config.use_env_variable) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////// VPCM DB UTILITIES /////////////////////////////////
+///////////////////////////////// VPCM DBWp UTILITIES /////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
 const _ = require('underscore');
@@ -108,39 +108,37 @@ const simpleQuery = (sqlQuery) => {
 
 }
 
-db.getBySql = getBySql;
-db.getByID = getByID;
-db.insertData = insertData;
-db.updateData = updateData;
-db.deleteData = deleteData;
-db.simpleQuery = simpleQuery;
+dbWp.getBySql = getBySql;
+dbWp.getByID = getByID;
+dbWp.insertData = insertData;
+dbWp.updateData = updateData;
+dbWp.deleteData = deleteData;
+dbWp.simpleQuery = simpleQuery;
+dbWp.tablesPrefix = 'zcmsds_';
 
 /////////////////////////////////////////////////////////////////////////////////////
-// REPLACE IMPORTATION OF JS FILES IN THIS FOLDER (SEQUELIZE MODELS) ////////////////
-// WITH MY OWN IMPLEMENTATION OF MODELS (fileModel.js) //////////////////////////////
+// DISABLE IMPORTATION OF JS FILES IN THIS FOLDER (SEQUELIZE MODELS) ////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
+/*
 fs
   .readdirSync(__dirname)
   .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-8) === 'Model.js');
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file));
-    const modelName = file.slice(0,-3);
-    db[modelName] = new model({getBySql,getByID,insertData,updateData,deleteData,simpleQuery});
-
-    // const model = sequelize['import'](path.join(__dirname, file));
-    // db[model.name] = model;
+    const model = sequelize['import'](path.join(__dirname, file));
+    dbWp[model.name] = model;
   });
 
-// Object.keys(db).forEach(modelName => {
-//   if (db[modelName].associate) {
-//     db[modelName].associate(db);
-//   }
-// });
+Object.keys(dbWp).forEach(modelName => {
+  if (dbWp[modelName].associate) {
+    dbWp[modelName].associate(dbWp);
+  }
+});
+*/
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+dbWp.sequelize = sequelize;
+dbWp.Sequelize = Sequelize;
 
-module.exports = db;
+module.exports = dbWp;

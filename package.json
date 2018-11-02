@@ -17,6 +17,7 @@
     "sequelize": "^4.41.2",
     "socket.io": "^2.2.0",
     "socketio-jwt-auth": "0.0.6",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "wordpress-hash-node": "^1.0.0"
   }
 }
