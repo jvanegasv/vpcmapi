@@ -114,6 +114,7 @@ db.insertData = insertData;
 db.updateData = updateData;
 db.deleteData = deleteData;
 db.simpleQuery = simpleQuery;
+db.wordpressPrefix = 'c0wordpress.zcmsds_';
 
 /////////////////////////////////////////////////////////////////////////////////////
 // REPLACE IMPORTATION OF JS FILES IN THIS FOLDER (SEQUELIZE MODELS) ////////////////
